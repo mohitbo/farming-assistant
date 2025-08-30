@@ -1,0 +1,639 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #f0f8f0;
+  color: #333;
+  line-height: 1.6;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url("assests/imagess.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.container {
+  max-width: 400px;
+  margin: 0 auto;
+  background: white;
+  min-height: 100vh;
+  position: relative;
+  padding-bottom: 70px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  background-image: url(assests/imagess.png);
+  background-position: center;
+  background-size: cover;
+}
+
+.container.white-bg {
+  background-image: none;
+  background-color: white;
+}
+
+/* Login Page Styles */
+#login-page {
+  padding: 20px;
+  text-align: center;
+}
+
+.app-title {
+  color: #2e7d32;
+  font-size: 28px;
+  margin: 40px 0 20px;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-option,
+.guest-option {
+  opacity: 0.8;
+  transition: opacity 0.3s;
+}
+
+.login-option:hover,
+.guest-option:hover {
+  opacity: 1;
+}
+
+.language-selector {
+  margin-top: 50%;
+  padding: 12px;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  font-size: 16px;
+  margin-bottom: 30px;
+}
+
+.login-option,
+.guest-option {
+  margin: 20px 0;
+}
+
+.login-option {
+  background-color: #4caf50;
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 15px 0;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.login-option:hover {
+  background-color: #3d8b40;
+}
+
+.guest-option {
+  background-color: #f1f8e9;
+  color: #2e7d32;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 15px 0;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #c5e1a5;
+}
+
+/* Main App Styles */
+#app-page {
+  display: none;
+}
+
+.header {
+  background: linear-gradient(to right, #2e7d32, #4caf50);
+  color: white;
+  padding: 20px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* ---------------- Dashboard Enhancements ---------------- */
+.weather-bar {
+  background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 12px;
+  border-bottom: 1px solid #c8e6c9;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.weather-info {
+  font-size: 18px;
+  font-weight: bold;
+  color: #2e7d32;
+}
+
+.profile-section {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  background-color: #f0fff0;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.profile-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #4caf50, #81c784);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  margin-right: 15px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.profile-name {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.detail-item {
+  margin-bottom: 10px;
+  display: flex;
+}
+
+.detail-label {
+  font-weight: bold;
+  width: 120px;
+  color: #555;
+}
+
+.detail-value {
+  flex: 1;
+}
+
+.menu-section {
+  padding: 20px 0;
+}
+
+.menu-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #2e7d32;
+}
+
+.menu-item {
+  padding: 15px;
+  background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+  margin-bottom: 10px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.menu-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.menu-icon {
+  margin-right: 15px;
+  color: #2e7d32;
+  font-size: 20px;
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  background-color: white;
+  border-top: 1px solid #ddd;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.nav-item {
+  flex: 1;
+  text-align: center;
+  padding: 15px 0;
+  color: #555;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.nav-item.active {
+  color: #2e7d32;
+  font-weight: bold;
+  background-color: #e0f2e9;
+  border-radius: 12px 12px 0 0;
+}
+
+.nav-icon {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+.share-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.footer {
+  text-align: center;
+  padding: 15px;
+  color: #666;
+  font-size: 12px;
+  border-top: 1px solid #eee;
+}
+
+/* --------------- New Pages CSS ---------------- */
+#phone-page,
+#otp-page {
+  display: none;
+  padding: 20px;
+  text-align: center;
+}
+
+#phone-input,
+#otp-input {
+  padding: 10px;
+  width: 80%;
+  font-size: 16px;
+  margin: 20px 0;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+#profile-page {
+  display: none;
+  padding: 20px;
+  text-align: center;
+}
+
+#profile-page input,
+#profile-page select {
+  padding: 10px;
+  width: 80%;
+  margin: 10px 0;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+/* Chat Section */
+/* === Chat Section Enhancement === */
+.chatbot-section {
+    background: linear-gradient(145deg, #dcedc8, #f0fff0);
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    padding: 20px;
+    margin-top: 20px;
+    border: 1px solid #c5e1a5;
+}
+
+/* Chat Output Area */
+.chat-output {
+    height: 200px;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border: 1px solid #c5e1a5;
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: inset 0 4px 8px rgba(0,0,0,0.06);
+    scrollbar-width: thin;
+    scrollbar-color: #81c784 #e8f5e9;
+}
+
+/* Scrollbar Styling for Webkit */
+.chat-output::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-output::-webkit-scrollbar-track {
+    background: #e8f5e9;
+    border-radius: 8px;
+}
+
+.chat-output::-webkit-scrollbar-thumb {
+    background-color: #81c784;
+    border-radius: 8px;
+    border: 2px solid #e8f5e9;
+}
+
+/* Input Field */
+#chat-input {
+    width: 70%;
+    padding: 10px 12px;
+    margin-right: 5px;
+    border-radius: 12px;
+    border: 1px solid #81c784;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.08);
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+#chat-input:focus {
+    border-color: #4caf50;
+    box-shadow: 0 0 8px rgba(76,175,80,0.3);
+}
+
+/* Buttons */
+.chatbot-section button {
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    background: linear-gradient(135deg, #4caf50, #2e7d32);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+    margin-right: 5px;
+}
+
+.chatbot-section button:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #81c784, #4caf50);
+}
+
+/* Individual Chat Bubbles */
+.chat-output div {
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    max-width: 80%;
+    word-wrap: break-word;
+    font-size: 14px;
+}
+
+.chat-output div b {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.chat-output div:nth-child(odd) {
+    background-color: #e8f5e9; /* User messages */
+    align-self: flex-start;
+}
+
+.chat-output div:nth-child(even) {
+    background-color: #c8e6c9; /* Assistant messages */
+    align-self: flex-end;
+}
+
+/* Smooth Scroll Animation */
+.chat-output {
+    scroll-behavior: smooth;
+}
+
+/* ---------------- Responsive Design ---------------- */
+/* Keep all your original responsive media queries intact */
+/* Laptops & Desktops */
+/* Small Phones */
+@media (max-width: 480px) {
+  .container {
+    max-width: 100%;
+    padding: 10px;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .app-title {
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .language-selector {
+    width: 100%;
+    font-size: 14px;
+    margin-top: 25%;
+  }
+
+  .login-option,
+  .guest-option {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .header {
+    font-size: 18px;
+    padding: 12px;
+  }
+
+  .weather-info {
+    font-size: 14px;
+  }
+
+  .menu-item {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .nav-item {
+    font-size: 10px;
+  }
+
+  .nav-icon {
+    font-size: 14px;
+  }
+
+  #phone-input,
+  #otp-input {
+    font-size: 14px;
+    width: 100%;
+  }
+}
+
+/* Phones */
+@media (min-width: 481px) and (max-width: 767px) {
+  .container {
+    max-width: 90%;
+    padding: 15px;
+  }
+
+  .app-title {
+    font-size: 24px;
+  }
+
+  .language-selector {
+    font-size: 15px;
+    margin-top: 20%;
+  }
+
+  .header {
+    font-size: 20px;
+    padding: 15px;
+  }
+
+  .weather-info {
+    font-size: 16px;
+  }
+
+  .menu-item {
+    font-size: 15px;
+    padding: 12px;
+  }
+
+  .nav-item {
+    font-size: 11px;
+  }
+
+  #phone-input,
+  #otp-input {
+    font-size: 15px;
+    width: 100%;
+  }
+}
+
+/* Tablets */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .container {
+    max-width: 700px;
+    margin: 20px auto;
+    border-radius: 12px;
+  }
+
+  .app-title {
+    font-size: 30px;
+  }
+
+  .language-selector {
+    width: 70%;
+    font-size: 16px;
+    margin-top: 15%;
+  }
+
+  .login-option,
+  .guest-option {
+    width: 70%;
+    margin: 10px auto;
+    font-size: 16px;
+  }
+
+  .header {
+    font-size: 24px;
+    padding: 20px;
+  }
+
+  .weather-bar {
+    font-size: 18px;
+    padding: 18px;
+  }
+
+  .menu-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+
+  .menu-item {
+    font-size: 15px;
+  }
+
+  .bottom-nav {
+    max-width: 700px;
+  }
+
+  #phone-input,
+  #otp-input {
+    font-size: 16px;
+    width: 80%;
+  }
+}
+
+/* Laptops & Desktops */
+@media (min-width: 1024px) {
+  .container {
+    max-width: 900px;
+    margin: 30px auto;
+    border-radius: 16px;
+  }
+
+  .app-title {
+    font-size: 36px;
+  }
+
+  .language-selector {
+    width: 60%;
+    font-size: 18px;
+    margin-top: 10%;
+  }
+
+  .login-option,
+  .guest-option {
+    width: 60%;
+    margin: 10px auto;
+    font-size: 18px;
+  }
+
+  .header {
+    font-size: 28px;
+    padding: 25px;
+  }
+
+  .weather-bar {
+    padding: 20px;
+    font-size: 20px;
+  }
+
+  .profile-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .profile-header {
+    flex: 1;
+    margin-bottom: 0;
+  }
+
+  .menu-section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .menu-item {
+    font-size: 16px;
+    padding: 18px;
+  }
+
+  .bottom-nav {
+    max-width: 900px;
+  }
+
+  #phone-input,
+  #otp-input {
+    font-size: 18px;
+    width: 60%;
+  }
+}
+
+#profile-page {
+  display: none;
+  padding: 20px;
+  text-align: center;
+}
