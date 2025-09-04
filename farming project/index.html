@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krishi Sakhi - AI Farming Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-animations">
+        <div class="sun"></div>
+        <div class="moon"></div>
+        <div class="clouds-container" id="cloudsContainer"></div>
+        <div class="leaf-container" id="leafContainer"></div>
+        <div class="soil-ground"></div>
+        <div class="tractor-container">
+            <div class="tractor">
+                <div class="tractor-body"></div>
+                <div class="tractor-wheel front-wheel"></div>
+                <div class="tractor-wheel back-wheel"></div>
+                <div class="exhaust-pipe"></div>
+                <div class="exhaust-smoke"></div>
+            </div>
+        </div>
+        <div class="grass-container" id="grassContainer"></div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <div class="back-button" id="backButton" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
+    <div id="dayNightToggle" onclick="toggleDayNight()">
+        <i class="fas fa-moon"></i> 
+    </div>
+    
+    <!-- Enhanced Language Selector -->
+    <div id="languageSelector" style="position: fixed; bottom: 20px; left: 20px; z-index: 1000; background: rgba(255,255,255,0.95); padding: 12px 16px; border-radius: 12px; font-family: 'Arial', sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 2px solid #2ecc71;">
+        <label for="langSelect" style="font-weight: 600; color: #2c3e50; margin-right: 8px;" data-translate="language_label">Language:</label>
+        <select id="langSelect" style="padding: 6px 12px; border: 2px solid #2ecc71; border-radius: 6px; background: white; font-size: 14px; cursor: pointer; outline: none;">
+            <option value="en">English</option>
+            <option value="hi">हिंदी (Hindi)</option>
+            <option value="mr">मराठी (Marathi)</option>
+            <option value="gu">ગુજરાતી (Gujarati)</option>
+            <option value="ml">മലയാളം (Malayalam)</option>
+        </select>
+    </div>
+
+    <div class="logo-container">
+        <img src="assets/logo.jpg" alt="Krishi Sakhi Logo" class="logo">
+        <span class="logo-text">Krishi Sakhi</span>
+    </div>
+
+    <div class="main-container">
+        <div id="login-page" class="page active">
+            <div class="login-content">
+                <h1 class="main-title">
+                    <span class="title-part">Krishi</span>
+                    <span style="color: #2ecc71;" class="title-part">Sakhi</span>
+                </h1>
+                <p class="subtitle" data-translate="subtitle">AI-Powered Personal Farming Assistant</p>
+                <div class="login-options">
+                    <div class="login-option primary" onclick="showPage('phone')"><i class="fas fa-phone"></i><span data-translate="login_phone">Login with Phone</span></div>
+                    <div class="login-option secondary" onclick="showHomePage()"><i class="fas fa-user"></i><span data-translate="guest_mode">Guest Mode</span></div>
+                </div>
+                <div class="footer-text"><p data-translate="footer_text">Empowering farmers with AI-driven insights</p></div>
+            </div>
+        </div>
+        
+        <div id="phone-page" class="page">
+            <div class="form-content">
+                <h2 class="page-title" data-translate="enter_phone">Enter Your Phone Number</h2>
+                <p class="page-subtitle" data-translate="otp_message">We'll send you an OTP for verification</p>
+                <div class="input-group">
+                    <input type="tel" id="phone-input" data-translate-placeholder="phone_placeholder" placeholder="10-digit phone number" maxlength="10">
+                    <div class="input-icon"><i class="fas fa-phone"></i></div>
+                </div>
+                <button class="primary-button" onclick="submitPhone()">
+                    <span data-translate="send_otp">Send OTP</span><i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div id="otp-page" class="page">
+            <div class="form-content">
+                <h2 class="page-title" data-translate="enter_code">Enter Verification Code</h2>
+                <p class="page-subtitle" data-translate="code_message">Enter the 6-digit code sent to your phone</p>
+                <div class="input-group">
+                    <input type="text" id="otp-input" data-translate-placeholder="otp_placeholder" placeholder="6-digit OTP" maxlength="6">
+                    <div class="input-icon"><i class="fas fa-shield-alt"></i></div>
+                </div>
+                <button class="primary-button" onclick="verifyOTP()">
+                    <span data-translate="verify">Verify</span><i class="fas fa-check"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div id="profile-page" class="page">
+            <div class="form-content">
+                <h2 class="page-title" data-translate="setup_profile">Setup Your Farm Profile</h2>
+                <p class="page-subtitle" data-translate="farm_details">Tell us about your farming details</p>
+                <div class="form-grid">
+                    <div class="input-group"><input type="text" id="farmer-name" data-translate-placeholder="your_name" placeholder="Your Name"><div class="input-icon"><i class="fas fa-user"></i></div></div>
+                    <div class="input-group"><input type="text" id="farm-location" data-translate-placeholder="farm_location" placeholder="Farm Location"><div class="input-icon"><i class="fas fa-map-marker-alt"></i></div></div>
+                    <div class="input-group"><input type="number" id="land-size" data-translate-placeholder="land_size" placeholder="Land Size (acres)"><div class="input-icon"><i class="fas fa-chart-area"></i></div></div>
+                    <div class="input-group">
+                        <select id="crop-type">
+                            <option value="" data-translate="select_crop">Select Primary Crop</option>
+                            <option value="Paddy" data-translate="paddy">Paddy</option>
+                            <option value="Coconut" data-translate="coconut">Coconut</option>
+                            <option value="Vegetables" data-translate="vegetables">Vegetables</option>
+                        </select>
+                        <div class="input-icon"><i class="fas fa-leaf"></i></div>
+                    </div>
+                    <div class="input-group">
+                        <select id="soil-type">
+                            <option value="" data-translate="select_soil">Select Soil Type</option>
+                            <option value="Loamy" data-translate="loamy">Loamy</option>
+                            <option value="Sandy" data-translate="sandy">Sandy</option>
+                            <option value="Clay" data-translate="clay">Clay</option>
+                        </select>
+                        <div class="input-icon"><i class="fas fa-mountain"></i></div>
+                    </div>
+                    <div class="input-group">
+                        <select id="irrigation-type">
+                            <option value="" data-translate="select_irrigation">Select Irrigation Type</option>
+                            <option value="Drip" data-translate="drip">Drip Irrigation</option>
+                            <option value="Sprinkler" data-translate="sprinkler">Sprinkler</option>
+                            <option value="Rainfed" data-translate="rainfed">Rain-fed</option>
+                        </select>
+                        <div class="input-icon"><i class="fas fa-tint"></i></div>
+                    </div>
+                </div>
+                <button class="primary-button" onclick="submitProfile()">
+                    <span data-translate="complete_setup">Complete Setup</span><i class="fas fa-check-circle"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div id="home-page" class="page">
+             <div class="dashboard-content">
+                <div class="dashboard-header">
+                    <div class="weather-card">
+                        <div class="weather-icon"><i class="fas fa-cloud-sun"></i></div>
+                        <div class="weather-info">
+                            <span class="temperature">28°C</span>
+                            <span class="weather-desc" data-translate="partly_cloudy">Partly Cloudy</span>
+                        </div>
+                    </div>
+                    <div class="farmer-profile">
+                        <div class="profile-avatar"><i class="fas fa-user-circle"></i></div>
+                        <div class="profile-info">
+                            <h3 id="farmer-name-display">Guest User</h3>
+                            <p id="farm-location-display">Kerala, India</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-container">
+                            <div class="stat-value">75</div>
+                            <div class="progress-circle" style="--p:75; --c:#2ecc71;"></div>
+                        </div>
+                        <div class="stat-label" data-translate="ai_queries">AI Queries Used</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-container">
+                            <div class="stat-value">12</div>
+                            <div class="progress-circle" style="--p:40; --c:#e67e22;"></div>
+                        </div>
+                        <div class="stat-label" data-translate="alerts_month">Alerts This Month</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-container">
+                            <div class="stat-value">92%</div>
+                            <div class="progress-circle" style="--p:92; --c:#3498db;"></div>
+                        </div>
+                        <div class="stat-label" data-translate="soil_moisture">Soil Moisture</div>
+                    </div>
+                </div>
+                
+                <div class="widget smart-assistant-widget">
+                    <div class="widget-header">
+                        <i class="fas fa-tasks"></i>
+                        <h3 data-translate="top_tasks">Today's Top 3 Tasks</h3>
+                    </div>
+                    <div class="widget-body">
+                        <div class="task-item">
+                            <div class="task-icon">🛰️</div>
+                            <div class="task-details">
+                                <h4 data-translate="task1_title">Inspect Northwest Field Corner.</h4>
+                                <p data-translate="task1_desc">Satellite data shows potential water stress.</p>
+                            </div>
+                        </div>
+                        <div class="task-item">
+                            <div class="task-icon">☀️</div>
+                            <div class="task-details">
+                                <h4 data-translate="task2_title">Apply Fertilizer Today.</h4>
+                                <p data-translate="task2_desc">Soil is dry and no rain is forecast for 48 hours.</p>
+                            </div>
+                        </div>
+                        <div class="task-item">
+                            <div class="task-icon">📈</div>
+                            <div class="task-details">
+                                <h4 data-translate="task3_title">Harvest Brinjal.</h4>
+                                <p data-translate="task3_desc">Prices at the market are up 7% this week.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="features-grid">
+                    <div class="feature-card weather-card-feature" onclick="showPage('weather')">
+                        <div class="feature-icon"><i class="fas fa-cloud-sun"></i></div>
+                        <h3 data-translate="weather">Weather</h3>
+                        <p data-translate="weather_desc">Current & forecast</p>
+                    </div>
+                    <div class="feature-card" onclick="showPage('activity')">
+                        <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                        <h3 data-translate="activity_logs">Activity Logs</h3>
+                        <p data-translate="activity_desc">Track your activities</p>
+                    </div>
+                    <div class="feature-card" onclick="showPage('insights')">
+                        <div class="feature-icon"><i class="fas fa-brain"></i></div>
+                        <h3 data-translate="ai_insights">AI Insights</h3>
+                        <p data-translate="insights_desc">Personalized recommendations</p>
+                    </div>
+                    <div class="feature-card yield-card" onclick="showPage('yield')">
+                        <div class="feature-icon"><i class="fas fa-chart-pie"></i></div>
+                        <h3 data-translate="yield_prediction">Yield Prediction</h3>
+                        <p data-translate="yield_desc">Forecast harvest & needs</p>
+                    </div>
+                    <div class="feature-card" onclick="showPage('soil')">
+                        <div class="feature-icon"><i class="fas fa-seedling"></i></div>
+                        <h3 data-translate="soil_type">Soil Type</h3>
+                        <p data-translate="soil_desc">Analysis & recommendations</p>
+                    </div>
+                    <div class="feature-card" onclick="showPage('irrigation')">
+                        <div class="feature-icon"><i class="fas fa-tint"></i></div>
+                        <h3 data-translate="irrigation">Irrigation</h3>
+                        <p data-translate="irrigation_desc">Water management system</p>
+                    </div>
+                    <div class="feature-card chat-card" onclick="showPage('chat')">
+                        <div class="feature-icon"><i class="fas fa-comments"></i></div>
+                        <h3 data-translate="chat_ai">Chat with AI</h3>
+                        <p data-translate="chat_desc">Ask questions, get answers</p>
+                    </div>
+                    <div class="feature-card" onclick="showPage('reminders')">
+                        <div class="feature-icon"><i class="fas fa-bell"></i></div>
+                        <h3 data-translate="reminders">Reminders & Alerts</h3>
+                        <p data-translate="reminders_desc">Never miss important tasks</p>
+                    </div>
+                </div>
+             </div>
+        </div>
+        
+        <div id="chat-page" class="page">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="chat-title">
+                        <i class="fas fa-robot"></i>
+                        <span data-translate="chat_title">Chat with Krishi Sakhi</span>
+                    </div>
+                    <div class="chat-status">
+                        <span class="status-dot"></span>
+                        <span data-translate="online">Online</span>
+                    </div>
+                </div>
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot-message">
+                        <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                        <div class="message-content">
+                            <p data-translate="chat_welcome">Hello! I'm your Krishi Sakhi. How can I help you today?</p>
+                        </div>
+                        <div class="message-time" data-translate="just_now">Just now</div>
+                    </div>
+                </div>
+                <div class="chat-input-section">
+                    <div class="chat-input-container">
+                        <input type="text" id="chatInput" data-translate-placeholder="chat_placeholder" placeholder="Type your message here...">
+                        <button class="voice-button" onclick="startVoiceInput()"><i class="fas fa-microphone"></i></button>
+                        <button class="send-button" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="activity-page" class="page">
+            <div class="page-content">
+                <div class="inner-page-content">
+                    <h2 class="page-title" data-translate="activity_logs">Activity Logs</h2>
+                    <p class="page-subtitle" data-translate="activity_record">A record of your recent farming activities.</p>
+                    <ul class="activity-list">
+                        <li class="activity-item">
+                            <i class="fas fa-seedling"></i>
+                            <div class="activity-details">
+                                <h4 data-translate="planted_seeds">Planted Paddy Seeds</h4>
+                                <p>September 1, 2025</p>
+                            </div>
+                        </li>
+                        <li class="activity-item">
+                            <i class="fas fa-vial"></i>
+                            <div class="activity-details">
+                                <h4 data-translate="applied_fertilizer">Applied Fertilizer</h4>
+                                <p>August 28, 2025</p>
+                            </div>
+                        </li>
+                        <li class="activity-item">
+                            <i class="fas fa-tint"></i>
+                            <div class="activity-details">
+                                <h4 data-translate="irrigated_field">Irrigated Field 2</h4>
+                                <p>August 25, 2025</p>
+                            </div>
+                        </li>
+                        <li class="activity-item">
+                            <i class="fas fa-bug"></i>
+                            <div class="activity-details">
+                                <h4 data-translate="pest_control">Pest Control Spray</h4>
+                                <p>August 22, 2025</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div id="weather-page" class="page">
+            <div class="page-content">
+                <div class="inner-page-content">
+                    <h2 class="page-title" data-translate="weather_forecast">Weather Forecast</h2>
+                    <p class="page-subtitle" data-translate="forecast_desc">7-Day outlook for your farm location.</p>
+                    <div class="forecast-grid">
+                        <div class="forecast-day">
+                            <h5 data-translate="today">Today</h5>
+                            <i class="fas fa-cloud-sun-rain"></i>
+                            <p>29°C</p>
+                        </div>
+                        <div class="forecast-day">
+                            <h5 data-translate="thu">Thu</h5>
+                            <i class="fas fa-cloud-showers-heavy"></i>
+                            <p>27°C</p>
+                        </div>
+                        <div class="forecast-day">
+                            <h5 data-translate="fri">Fri</h5>
+                            <i class="fas fa-cloud"></i>
+                            <p>28°C</p>
+                        </div>
+                        <div class="forecast-day">
+                            <h5 data-translate="sat">Sat</h5>
+                            <i class="fas fa-sun"></i>
+                            <p>31°C</p>
+                        </div>
+                        <div class="forecast-day">
+                            <h5 data-translate="sun">Sun</h5>
+                            <i class="fas fa-sun"></i>
+                            <p>32°C</p>
+                        </div>
+                        <div class="forecast-day">
+                            <h5 data-translate="mon">Mon</h5>
+                            <i class="fas fa-cloud-sun"></i>
+                            <p>30°C</p>
+                        </div>
+                        <div class="forecast-day">
+                            <h5 data-translate="tue">Tue</h5>
+                            <i class="fas fa-bolt"></i>
+                            <p>28°C</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="insights-page" class="page">
+            <div class="page-content">
+                <div class="inner-page-content">
+                    <h2 class="page-title" data-translate="ai_insights">AI Insights</h2>
+                    <p class="page-subtitle" data-translate="coming_soon">Content coming soon.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="yield-page" class="page">
+            <div class="page-content">
+                <div class="inner-page-content">
+                    <h2 class="page-title" data-translate="yield_prediction">Yield Prediction</h2>
+                    <p class="page-subtitle" data-translate="coming_soon">Content coming soon.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="soil-page" class="page">
+            <div class="page-content">
+                <div class="inner-page-content">
+                    <h2 class="page-title" data-translate="soil_analysis">Soil Analysis</h2>
+                    <p class="page-subtitle" data-translate="coming_soon">Content coming soon.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="irrigation-page" class="page">
+            <div class="page-content">
+                <div class="inner-page-content">
+                    <h2 class="page-title" data-translate="irrigation_management">Irrigation Management</h2>
+                    <p class="page-subtitle" data-translate="coming_soon">Content coming soon.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="reminders-page" class="page">
+            <div class="page-content">
+                <div class="inner-page-content">
+                    <h2 class="page-title" data-translate="reminders">Reminders & Alerts</h2>
+                    <p class="page-subtitle" data-translate="coming_soon">Content coming soon.</p>
+                </div>
+            </div>
+        </div>
+    </div>  
+    
+    
+
+    <script>
+        // Translation data
+        const translations = {
+            en: {
+                language_label: "Language:",
+                subtitle: "AI-Powered Personal Farming Assistant",
+                login_phone: "Login with Phone",
+                guest_mode: "Guest Mode",
+                footer_text: "Empowering farmers with AI-driven insights",
+                enter_phone: "Enter Your Phone Number",
+                otp_message: "We'll send you an OTP for verification",
+                phone_placeholder: "10-digit phone number",
+                send_otp: "Send OTP",
+                enter_code: "Enter Verification Code",
+                code_message: "Enter the 6-digit code sent to your phone",
+                otp_placeholder: "6-digit OTP",
+                verify: "Verify",
+                setup_profile: "Setup Your Farm Profile",
+                farm_details: "Tell us about your farming details",
+                your_name: "Your Name",
+                farm_location: "Farm Location",
+                land_size: "Land Size (acres)",
+                select_crop: "Select Primary Crop",
+                paddy: "Paddy",
+                coconut: "Coconut",
+                vegetables: "Vegetables",
+                select_soil: "Select Soil Type",
+                loamy: "Loamy",
+                sandy: "Sandy",
+                clay: "Clay",
+                select_irrigation: "Select Irrigation Type",
+                drip: "Drip Irrigation",
+                sprinkler: "Sprinkler",
+                rainfed: "Rain-fed",
+                complete_setup: "Complete Setup",
+                partly_cloudy: "Partly Cloudy",
+                ai_queries: "AI Queries Used",
+                alerts_month: "Alerts This Month",
+                soil_moisture: "Soil Moisture",
+                top_tasks: "Today's Top 3 Tasks",
+                task1_title: "Inspect Northwest Field Corner.",
+                task1_desc: "Satellite data shows potential water stress.",
+                task2_title: "Apply Fertilizer Today.",
+                task2_desc: "Soil is dry and no rain is forecast for 48 hours.",
+                task3_title: "Harvest Brinjal.",
+                task3_desc: "Prices at the market are up 7% this week.",
+                weather: "Weather",
+                weather_desc: "Current & forecast",
+                activity_logs: "Activity Logs",
+                activity_desc: "Track your activities",
+                ai_insights: "AI Insights",
+                insights_desc: "Personalized recommendations",
+                yield_prediction: "Yield Prediction",
+                yield_desc: "Forecast harvest & needs",
+                soil_type: "Soil Type",
+                soil_desc: "Analysis & recommendations",
+                irrigation: "Irrigation",
+                irrigation_desc: "Water management system",
+                chat_ai: "Chat with AI",
+                chat_desc: "Ask questions, get answers",
+                reminders: "Reminders & Alerts",
+                reminders_desc: "Never miss important tasks",
+                chat_title: "Chat with Krishi Sakhi",
+                online: "Online",
+                chat_welcome: "Hello! I'm your Krishi Sakhi. How can I help you today?",
+                just_now: "Just now",
+                chat_placeholder: "Type your message here...",
+                activity_record: "A record of your recent farming activities.",
+                planted_seeds: "Planted Paddy Seeds",
+                applied_fertilizer: "Applied Fertilizer",
+                irrigated_field: "Irrigated Field 2",
+                pest_control: "Pest Control Spray",
+                weather_forecast: "Weather Forecast",
+                forecast_desc: "7-Day outlook for your farm location.",
+                today: "Today",
+                thu: "Thu",
+                fri: "Fri",
+                sat: "Sat",
+                sun: "Sun",
+                mon: "Mon",
+                tue: "Tue",
+                soil_analysis: "Soil Analysis",
+                irrigation_management: "Irrigation Management",
+                coming_soon: "Content coming soon."
+            },
+            hi: {
+                language_label: "भाषा:",
+                subtitle: "एआई-संचालित व्यक्तिगत कृषि सहायक",
+                login_phone: "फोन से लॉगिन करें",
+                guest_mode: "अतिथि मोड",
+                footer_text: "एआई-संचालित अंतर्दृष्टि के साथ किसानों को सशक्त बनाना",
+                enter_phone: "अपना फोन नंबर दर्ज करें",
+                otp_message: "हम आपको सत्यापन के लिए एक ओटीपी भेजेंगे",
+                phone_placeholder: "10-अंकीय फोन नंबर",
+                send_otp: "ओटीपी भेजें",
+                enter_code: "सत्यापन कोड दर्ज करें",
+                code_message: "अपने फोन पर भेजा गया 6-अंकीय कोड दर्ज करें",
+                otp_placeholder: "6-अंकीय ओटीपी",
+                verify: "सत्यापित करें",
+                setup_profile: "अपनी खेती प्रोफाइल सेट करें",
+                farm_details: "हमें अपनी खेती के विवरण के बारे में बताएं",
+                your_name: "आपका नाम",
+                farm_location: "खेत स्थान",
+                land_size: "भूमि का आकार (एकड़)",
+                select_crop: "प्राथमिक फसल चुनें",
+                paddy: "धान",
+                coconut: "नारियल",
+                vegetables: "सब्जियां",
+                select_soil: "मिट्टी का प्रकार चुनें",
+                loamy: "दोमट",
+                sandy: "रेतीली",
+                clay: "चिकनी मिट्टी",
+                select_irrigation: "सिंचाई प्रकार चुनें",
+                drip: "ड्रिप सिंचाई",
+                sprinkler: "छिड़काव",
+                rainfed: "वर्षा आधारित",
+                complete_setup: "सेटअप पूरा करें",
+                partly_cloudy: "आंशिक रूप से बादल",
+                ai_queries: "एआई क्वेरी उपयोग",
+                alerts_month: "इस महीने अलर्ट",
+                soil_moisture: "मिट्टी की नमी",
+                top_tasks: "आज के शीर्ष 3 कार्य",
+                task1_title: "उत्तर-पश्चिम खेत कोने का निरीक्षण करें।",
+                task1_desc: "उपग्रह डेटा संभावित जल तनाव दिखाता है。",
+                task2_title: "आज उर्वरक डालें।",
+                task2_desc: "मिट्टी सूखी है और 48 घंटों तक बारिश की संभावना नहीं है。",
+                task3_title: "बैंगन की कटाई करें。",
+                task3_desc: "बाजार में कीमतें इस सप्ताह 7% बढ़ी हैं。",
+                weather: "मौसम",
+                weather_desc: "वर्तमान और पूर्वानुमान",
+                activity_logs: "गतिविधि लॉग",
+                activity_desc: "अपनी गतिविधियों को ट्रैक करें",
+                ai_insights: "एआई अंतर्दृष्टि",
+                insights_desc: "व्यक्तिगत सिफारिशें",
+                yield_prediction: "उत्पादन पूर्वानुमान",
+                yield_desc: "फसल और जरूरतों का पूर्वानुमान",
+                soil_type: "मिट्टी का प्रकार",
+                soil_desc: "विश्लेषण और सिफारिशें",
+                irrigation: "सिंचाई",
+                irrigation_desc: "जल प्रबंधन प्रणाली",
+                chat_ai: "एआई के साथ चैट करें",
+                chat_desc: "प्रश्न पूछें, उत्तर पाएं",
+                reminders: "अनुस्मारक और अलर्ट",
+                reminders_desc: "महत्वपूर्ण कार्य कभी न चूकें",
+                chat_title: "कृषि सखी के साथ चैट करें",
+                online: "ऑनलाइन",
+                chat_welcome: "नमस्ते! मैं आपकी कृषि सखी हूं। आज मैं आपकी कैसे मदद कर सकती हूं?",
+                just_now: "अभी",
+                chat_placeholder: "यहां अपना संदेश टाइप करें...",
+                activity_record: "आपकी हाल की कृषि गतिविधियों का रिकॉर्ड।",
+                planted_seeds: "धान के बीज बोए",
+                applied_fertilizer: "उर्वरक डाला",
+                irrigated_field: "खेत 2 की सिंचाई की",
+                pest_control: "कीट नियंत्रण स्प्रे",
+                weather_forecast: "मौसम पूर्वानुमान",
+                forecast_desc: "आपके खेत स्थान के लिए 7-दिवस का दृष्टिकोण।",
+                today: "आज",
+                thu: "गुरु",
+                fri: "शुक्र",
+                sat: "शनि",
+                sun: "रवि",
+                mon: "सोम",
+                tue: "मंगल",
+                soil_analysis: "मिट्टी विश्लेषण",
+                irrigation_management: "सिंचाई प्रबंधन",
+                coming_soon: "सामग्री जल्द आ रही है।"
+            },
+            mr: {
+                language_label: "भाषा:",
+                subtitle: "एआय-चालित वैयक्तिक शेती सहाय्यक",
+                login_phone: "फोनने लॉगिन करा",
+                guest_mode: "पाहुणा मोड",
+                footer_text: "एआय-चालित अंतर्दृष्टीसह शेतकऱ्यांना सक्षम करणे",
+                enter_phone: "तुमचा फोन नंबर टाका",
+                otp_message: "आम्ही तुम्हाला सत्यापनासाठी एक ओटीपी पाठवू",
+                phone_placeholder: "10-अंकी फोन नंबर",
+                send_otp: "ओटीपी पाठवा",
+                enter_code: "सत्यापन कोड टाका",
+                code_message: "तुमच्या फोनवर पाठवलेला 6-अंकी कोड टाका",
+                otp_placeholder: "6-अंकी ओटीपी",
+                verify: "सत्यापित करा",
+                setup_profile: "तुमची शेती प्रोफाइल सेट करा",
+                farm_details: "तुमच्या शेतीच्या तपशीलांबद्दल सांगा",
+                your_name: "तुमचे नाव",
+                farm_location: "शेत स्थान",
+                land_size: "जमिनीचा आकार (एकर)",
+                select_crop: "प्राथमिक पीक निवडा",
+                paddy: "भात",
+                coconut: "नारळ",
+                vegetables: "भाज्या",
+                select_soil: "मातीचा प्रकार निवडा",
+                loamy: "मुळमाती",
+                sandy: "वालुकामय",
+                clay: "चिकणमाती",
+                select_irrigation: "सिंचन प्रकार निवडा",
+                drip: "ड्रिप सिंचन",
+                sprinkler: "फवारणी",
+                rainfed: "पावसाळी",
+                complete_setup: "सेटअप पूर्ण करा",
+                partly_cloudy: "अंशतः ढगाळ",
+                ai_queries: "एआय प्रश्न वापरले",
+                alerts_month: "या महिन्यात अलर्ट",
+                soil_moisture: "मातीतील ओलावा",
+                top_tasks: "आजची टॉप 3 कामे",
+                task1_title: "उत्तर-पश्चिम शेत कोपऱ्याचे निरीक्षण करा।",
+                task1_desc: "उपग्रह डेटा संभाव्य पाणी तणाव दाखवतो।",
+                task2_title: "आज खत घाला।",
+                task2_desc: "माती कोरडी आहे आणि 48 तासांपर्यंत पाऊस नाही।",
+                task3_title: "वांगी कापणी करा।",
+                task3_desc: "बाजारात किमती या आठवड्यात 7% वाढल्या आहेत।",
+                weather: "हवामान",
+                weather_desc: "सध्याचे आणि अंदाज",
+                activity_logs: "क्रियाकलाप लॉग",
+                activity_desc: "तुमच्या क्रियाकलापांचा मागोवा घ्या",
+                ai_insights: "एआय अंतर्दृष्टी",
+                insights_desc: "वैयक्तिक शिफारसी",
+                yield_prediction: "उत्पादन अंदाज",
+                yield_desc: "कापणी आणि गरजांचा अंदाज",
+                soil_type: "मातीचा प्रकार",
+                soil_desc: "विश्लेषण आणि शिफारसी",
+                irrigation: "सिंचन",
+                irrigation_desc: "पाणी व्यवस्थापन प्रणाली",
+                chat_ai: "एआयशी गप्पा मारा",
+                chat_desc: "प्रश्न विचारा, उत्तरे मिळवा",
+                reminders: "स्मरणपत्रे आणि अलर्ट",
+                reminders_desc: "महत्वाची कामे कधीही चुकवू नका",
+                chat_title: "कृषी सखीशी गप्पा मारा",
+                online: "ऑनलाइन",
+                chat_welcome: "नमस्कार! मी तुमची कृषी सखी आहे. आज मी तुमची कशी मदत करू शकते?",
+                just_now: "आत्ताच",
+                chat_placeholder: "तुमचा संदेश येथे टाइप करा...",
+                activity_record: "तुमच्या अलीकडील शेती क्रियाकलापांची नोंद।",
+                planted_seeds: "भाताची बियाणे लावली",
+                applied_fertilizer: "खत घातले",
+                irrigated_field: "शेत 2 चे सिंचन केले",
+                pest_control: "कीड नियंत्रण फवारणी",
+                weather_forecast: "हवामान अंदाज",
+                forecast_desc: "तुमच्या शेत स्थानासाठी 7-दिवसांचा दृष्टिकोण।",
+                today: "आज",
+                thu: "गुरु",
+                fri: "शुक्र",
+                sat: "शनि",
+                sun: "रवि",
+                mon: "सोम",
+                tue: "मंगळ",
+                soil_analysis: "माती विश्लेषण",
+                irrigation_management: "सिंचन व्यवस्थापन",
+                coming_soon: "सामग्री लवकरच येत आहे।"
+            },
+            gu: {
+                language_label: "ભાષા:",
+                subtitle: "એઆઈ-સંચાલિત વ્યક્તિગત ખેતી સહાયક",
+                login_phone: "ફોન વડે લોગિન કરો",
+                guest_mode: "ગેસ્ટ મોડ",
+                footer_text: "એઆઈ-સંચાલિત અંતર્દૃષ્ટિ સાથે ખેડૂતોને સશક્ત બનાવવું",
+                enter_phone: "તમારો ફોન નંબર દાખલ કરો",
+                otp_message: "અમે તમને ચકાસણી માટે એક ઓટીપી મોકલીશું",
+                phone_placeholder: "10-અંકનો ફોન નંબર",
+                send_otp: "ઓટીપી મોકલો",
+                enter_code: "ચકાસણી કોડ દાખલ કરો",
+                code_message: "તમારા ફોન પર મોકલાયેલો 6-અંકનો કોડ દાખલ કરો",
+                otp_placeholder: "6-અંકનો ઓટीપી",
+                verify: "ચકાસો",
+                setup_profile: "તમારી ખેતીની પ્રોફાઇલ સેટ કરો",
+                farm_details: "તમારી ખેતીની વિગતો વિશે જણાવો",
+                your_name: "તમારું નામ",
+                farm_location: "ખેત સ્થાન",
+                land_size: "જમીનનું કદ (એકર)",
+                select_crop: "પ્રાથમિક પાક પસંદ કરો",
+                paddy: "ચોખા",
+                coconut: "નારિયેળ",
+                vegetables: "શાકભાજી",
+                select_soil: "માટીનો પ્રકાર પસંદ કરો",
+                loamy: "લोમી",
+                sandy: "રેતાળ",
+                clay: "માટીની",
+                select_irrigation: "સિંચાઈનો પ્રકાર પસંદ કરો",
+                drip: "ડ્રિપ સિંચાઈ",
+                sprinkler: "છંટકાવ",
+                rainfed: "વરસાદી",
+                complete_setup: "સેટઅપ પૂર્ણ કરો",
+                partly_cloudy: "આંશિક વાદળછાયું",
+                ai_queries: "એઆઈ પ્રશ્નો વપરાયા",
+                alerts_month: "આ મહિને એલર્ટ્સ",
+                soil_moisture: "मાટીની ભેજ",
+                top_tasks: "આજના ટોપ 3 કાર્યો",
+                task1_title: "ઉત્તર-પશ્ચિમ ખેતરના ખૂણાની તપાસ કરો।",
+                task1_desc: "સેટેલાઇટ ડેટા સંભવિત પાણીના તણાવ દર્શાવે છે।",
+                task2_title: "આજે ખાતર નાખો।",
+                task2_desc: "માટી સૂકી છે અને 48 કલાક સુધી વરસાદની આગાહી નથી।",
+                task3_title: "રીંગણની કાપણી કરો।",
+                task3_desc: "બજારમાં ભાવ આ અઠવાડિયે 7% વધ્યા છે।",
+                weather: "હવામાન",
+                weather_desc: "વર્તમાન અને આગાહી",
+                activity_logs: "પ્રવૃત્તિ લોગ્સ",
+                activity_desc: "તમારી પ્રવૃત્તિઓને ટ્રેક કરો",
+                ai_insights: "એઆઈ અંતર્દૃષ્ટિ",
+                insights_desc: "વ્યક્તિગત ભલામણો",
+                yield_prediction: "ઉत્પાદન આગાહી",
+                yield_desc: "કાપણી અને જરૂરિયાતોની આગાહી",
+                soil_type: "માટીનો પ્રકાર",
+                soil_desc: "વિશ્લેષણ અને ભલામણો",
+                irrigation: "સિંચાઈ",
+                irrigation_desc: "પાણી વ્યવસ્થાપન પ્રણાલી",
+                chat_ai: "એઆઈ સાથે ચેટ કરો",
+                chat_desc: "પ્રશ્નો पૂછો, જવાબો मેળવો",
+                reminders: "રિમાઇન્ડર્સ અને એલર્ટ્સ",
+                reminders_desc: "મહત્વપૂર્ણ કાર્યો ક્યારેય ચૂકશો નહીં",
+                chat_title: "કૃષિ સખી સાથે ચેટ કરો",
+                online: "ઓનલાઇન",
+                chat_welcome: "નમસ્તે! હું તમારી કૃષિ સખી છું. આજે હું તમારી કેવી રીતે મદદ કરી શકું?",
+                just_now: "હમણાં જ",
+                chat_placeholder: "અહીં તમારો સંદેશ ટાઇપ કરો...",
+                activity_record: "તમારી તાજેતરની ખેતી પ્રવૃત્તિઓનો રેકોર્ડ।",
+                planted_seeds: "ચોખાના બીજ વાવ્યા",
+                applied_fertilizer: "ખાતર નાખ્યું",
+                irrigated_field: "ખેતર 2 ને સિંચાઈ આપી",
+                pest_control: "કીડક નિયંત્રણ છંટકાવ",
+                weather_forecast: "હવામાન આગાહી",
+                forecast_desc: "તમારા ખેત સ્થાન માટે 7-દિવસનો દૃષ્ટિકોણ।",
+                today: "આજે",
+                thu: "ગુરુ",
+                fri: "શુક્ર",
+                sat: "શનિ",
+                sun: "રવિ",
+                mon: "સોમ",
+                tue: "મંગળ",
+                soil_analysis: "માટી વિશ્લેષણ",
+                irrigation_management: "સિંચાઈ વ્યવસ્થાપન",
+                coming_soon: "સામગ્રી ટૂંક સમયમાં આવશે।"
+            },
+            ml: {
+                language_label: "ഭാഷ:",
+                subtitle: "എഐ-പവർഡ് വ്യക്തിഗത കൃഷി സഹായി",
+                login_phone: "ഫോൺ ഉപയോഗിച്ച് ലോഗിൻ ചെയ്യുക",
+                guest_mode: "ഗസ്റ്റ് മോഡ്",
+                footer_text: "എഐ-ഡ്രിവൻ ഇൻസൈറ്റുകൾ ഉപയോഗിച്ച് കർഷകരെ ശാക്തീകരിക്കുന്നു",
+                enter_phone: "നിങ്ങളുടെ ഫോൺ നമ്പർ നൽകുക",
+                otp_message: "സ്ഥിരീകരണത്തിനായി ഞങ്ങൾ നിങ്ങൾക്ക് ഒരു ഒടിപി അയയ്ക്കും",
+                phone_placeholder: "10-അക്ക ഫോൺ നമ്പർ",
+                send_otp: "ഒടിപി അയയ്ക്കുക",
+                enter_code: "സ്ഥിരീകരണ കോഡ് നൽകുക",
+                code_message: "നിങ്ങളുടെ ഫോണിലേക്ക് അയച്ച 6-അക്ക കോഡ് നൽകുക",
+                otp_placeholder: "6-അക്ക ഒടിപി",
+                verify: "സ്ഥിരീകരിക്കുക",
+                setup_profile: "നിങ്ങളുടെ കൃഷി പ്രൊഫൈൽ സജ്ജീകരിക്കുക",
+                farm_details: "നിങ്ങളുടെ കൃഷി വിശദാംശങ്ങളെ കുറിച്ച് പറയുക",
+                your_name: "നിങ്ങളുടെ പേര്",
+                farm_location: "കൃഷിയിടത്തിന്റെ സ്ഥലം",
+                land_size: "ഭൂമിയുടെ വലുപ്പം (ഏക്കർ)",
+                select_crop: "പ്രാഥമിക വിള തിരഞ്ഞെടുക്കുക",
+                paddy: "നെല്ല്",
+                coconut: "തെങ്ങ്",
+                vegetables: "പച്ചക്കറികൾ",
+                select_soil: "മണ്ണിന്റെ തരം തിരഞ്ഞെടുക്കുക",
+                loamy: "കളിമണ്ണ്",
+                sandy: "മണൽ മണ്ണ്",
+                clay: "കളിമണ്ണ്",
+                select_irrigation: "ജലസേചന തരം തിരഞ്ഞെടുക്കുക",
+                drip: "ഡ്രിപ് ജലസേചനം",
+                sprinkler: "സ്പ്രിംക്ലർ",
+                rainfed: "മഴ-ആശ്രിത",
+                complete_setup: "സജ്ജീകരണം പൂർത്തിയാക്കുക",
+                partly_cloudy: "ഭാഗികമായി മേഘാവൃതം",
+                ai_queries: "എഐ ചോദ്യങ്ങൾ ഉപയോഗിച്ചു",
+                alerts_month: "ഈ മാസത്തെ അലേർട്ടുകൾ",
+                soil_moisture: "മണ്ണിലെ ഈർപ്പം",
+                top_tasks: "ഇന്നത്തെ മുൻ 3 കാര്യങ്ങൾ",
+                task1_title: "വടക്ക്-പടിഞ്ഞാറൻ വയൽ കോർണർ പരിശോധിക്കുക.",
+                task1_desc: "സാറ്റലൈറ്റ് ഡാറ്റ സാധ്യമായ ജല സമ്മർദ്ദം കാണിക്കുന്നു.",
+                task2_title: "ഇന്ന് രാസവള പ്രയോഗിക്കുക.",
+                task2_desc: "മണ്ണ് വരണ്ടതാണ്, 48 മണിക്കൂർ മഴയില്ല.",
+                task3_title: "വഴുതന വിളവെടുക്കുക.",
+                task3_desc: "ഈ ആഴ്ച മാർക്കറ്റിൽ വില 7% ഉയർന്നു.",
+                weather: "കാലാവസ്ഥ",
+                weather_desc: "നിലവിലുള്ളതും പ്രവചനവും",
+                activity_logs: "പ്രവർത്തന രേഖകൾ",
+                activity_desc: "നിങ്ങളുടെ പ്രവർത്തനങ്ങൾ ട്രാക്ക് ചെയ്യുക",
+                ai_insights: "എഐ ഇൻസൈറ്റുകൾ",
+                insights_desc: "വ്യക്തിഗത ശുപാർശകൾ",
+                yield_prediction: "വിള പ്രവചനം",
+                yield_desc: "വിളവെടുപ്പും ആവശ്യങ്ങളും പ്രവചിക്കുക",
+                soil_type: "മണ്ണിന്റെ തരം",
+                soil_desc: "വിശകലനവും ശുപാർശകളും",
+                irrigation: "ജലസേചനം",
+                irrigation_desc: "ജല പരിപാലന സംവിധാനം",
+                chat_ai: "എഐയുമായി ചാറ്റ് ചെയ്യുക",
+                chat_desc: "ചോദ്യങ്ങൾ ചോദിക്കുക, ഉത്തരങ്ങൾ നേടുക",
+                reminders: "ഓർമ്മപ്പെടുത്തലുകളും അലേർട്ടുകളും",
+                reminders_desc: "പ്രധാനപ്പെട്ട കാര്യങ്ങൾ ഒരിക്കലും നഷ്ടപ്പെടുത്തരുത്",
+                chat_title: "കൃഷി സഖിയുമായി ചാറ്റ് ചെയ്യുക",
+                online: "ഓൺലൈൻ",
+                chat_welcome: "ഹലോ! ഞാൻ നിങ്ങളുടെ കൃഷി സഖിയാണ്. ഇന്ന് എനിക്ക് എങ്ങനെ നിങ്ങളെ സഹായിക്കാനാകും?",
+                just_now: "ഇപ്പോൾ",
+                chat_placeholder: "നിങ്ങളുടെ സന്ദേശം ഇവിടെ ടൈപ് ചെയ്യുക...",
+                activity_record: "നിങ്ങളുടെ സമീപകാല കൃഷി പ്രവർത്തനങ്ങളുടെ രേഖ.",
+                planted_seeds: "നെൽ വിത്തുകൾ നട്ടു",
+                applied_fertilizer: "രാസവള പ്രയോഗിച്ചു",
+                irrigated_field: "വയൽ 2 ജലസേചനം ചെയ്തു",
+                pest_control: "കീടനിയന്ത്രണ സ്പ്രേ",
+                weather_forecast: "കാലാവസ്ഥാ പ്രവചനം",
+                forecast_desc: "നിങ്ങളുടെ കൃഷിയിട സ്ഥലത്തിന്റെ 7-ദിവസത്തെ കാഴ്ചപ്പാട്.",
+                today: "ഇന്ന്",
+                thu: "വ്യാഴം",
+                fri: "വെള്ളി",
+                sat: "ശനി",
+                sun: "ഞായർ",
+                mon: "തിങ്കൾ",
+                tue: "ചൊവ്വ",
+                soil_analysis: "മണ്ണ് വിശകലനം",
+                irrigation_management: "ജലസೇചന പरിപാലനം",
+                coming_soon: "ഉള്ളടക്കം ഉടൻ വരുന്നു."
+            }
+        };
+
+        // Current language
+        let currentLanguage = 'en';
+
+        // Original content stored for reference
+        let originalContent = {};
+
+        // Translation function
+        function translatePage(language) {
+            currentLanguage = language;
+            const translation = translations[language];
+            
+            if (!translation) return;
+
+            // Translate elements with data-translate attribute
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translation[key]) {
+                    element.textContent = translation[key];
+                }
+            });
+
+            // Translate placeholders
+            document.querySelectorAll('[data-translate-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-translate-placeholder');
+                if (translation[key]) {
+                    element.placeholder = translation[key];
+                }
+            });
+
+            // Update select options
+            const selectElements = {
+                'crop-type': {
+                    '': 'select_crop',
+                    'Paddy': 'paddy',
+                    'Coconut': 'coconut',
+                    'Vegetables': 'vegetables'
+                },
+                'soil-type': {
+                    '': 'select_soil',
+                    'Loamy': 'loamy',
+                    'Sandy': 'sandy',
+                    'Clay': 'clay'
+                },
+                'irrigation-type': {
+                    '': 'select_irrigation',
+                    'Drip': 'drip',
+                    'Sprinkler': 'sprinkler',
+                    'Rainfed': 'rainfed'
+                }
+            };
+
+            Object.keys(selectElements).forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    const options = select.querySelectorAll('option');
+                    options.forEach(option => {
+                        const value = option.value;
+                        const translationKey = selectElements[selectId][value];
+                        if (translationKey && translation[translationKey]) {
+                            option.textContent = translation[translationKey];
+                        }
+                    });
+                }
+            });
+
+            // Save language preference (in a real app, you'd save this to localStorage or server)
+            document.documentElement.lang = language === 'en' ? 'en' : language;
+        }
+
+        // Initialize language selector
+        function initLanguageSelector() {
+            const langSelect = document.getElementById('langSelect');
+            if (langSelect) {
+                langSelect.addEventListener('change', function() {
+                    translatePage(this.value);
+                    showToast(`Language changed to ${this.options[this.selectedIndex].text}`);
+                });
+            }
+        }
+
+        // --- EXISTING SCRIPT FUNCTIONS ---
+        let currentPage = 'login', pageHistory = [], isDay = true, currentFarmerName = "Guest User", currentFarmLocation = "Kerala, India";
+        
+        function createLeaves() { 
+            const c = document.getElementById('leafContainer'); 
+            if (!c) return; 
+            for (let i = 0; i < 20; i++) { 
+                const l = document.createElement('div'); 
+                l.className = 'leaf'; 
+                l.style.left = Math.random() * 100 + 'vw'; 
+                l.style.animationDelay = Math.random() * 15 + 's'; 
+                l.style.animationDuration = 5 + Math.random() * 8 + 's'; 
+                c.appendChild(l); 
+            } 
+        }
+        
+        function createClouds() { 
+            const c = document.querySelector('.clouds-container'); 
+            if (!c) return; 
+            for (let i = 1; i <= 2; i++) { 
+                const d = document.createElement('div'); 
+                d.className = `cloud cloud${i}`; 
+                d.innerHTML = `<div class="cloud-part cloud-part1"></div><div class="cloud-part cloud-part2"></div><div class="cloud-part cloud-part3"></div>`; 
+                c.appendChild(d); 
+            } 
+        }
+        
+        function createRain() { 
+            const c = document.createElement('div'); 
+            c.id = 'rain-container'; 
+            c.className = 'rain-drops'; 
+            document.querySelector('.background-animations').appendChild(c); 
+            for (let i = 0; i < 80; i++) { 
+                const d = document.createElement('div'); 
+                d.className = 'rain-drop'; 
+                d.style.left = Math.random() * 100 + 'vw'; 
+                d.style.animationDelay = Math.random() * 2 + 's'; 
+                d.style.animationDuration = 0.5 + Math.random() * 0.5 + 's'; 
+                c.appendChild(d); 
+            } 
+        }
+        
+        function toggleDayNight() {
+            const b = document.body, t = document.getElementById('dayNightToggle'), r = document.getElementById('rain-container');
+            isDay = !isDay;
+            if (isDay) { 
+                b.classList.remove('night'); 
+                b.classList.add('day'); 
+                if (t) t.innerHTML = '<i class="fas fa-moon"></i>'; 
+                if (r) r.classList.remove('active'); 
+                showToast(getTranslatedToast("day")); 
+            }
+            else { 
+                b.classList.remove('day'); 
+                b.classList.add('night'); 
+                if (t) t.innerHTML = '<i class="fas fa-sun"></i>'; 
+                if (r) r.classList.add('active'); 
+                showToast(getTranslatedToast("night")); 
+            }
+        }
+
+        function getTranslatedToast(type) {
+            const toastMessages = {
+                en: {
+                    day: "It's now Day ☀️",
+                    night: "It's now Night & Raining 🌙🌧️",
+                    otp_sent: "OTP sent!",
+                    verified: "Verified!",
+                    profile_created: "Profile created!",
+                    voice_coming_soon: "Voice input coming soon!",
+                    enter_valid_phone: "Enter a valid 10-digit number.",
+                    enter_valid_otp: "Enter a valid 6-digit OTP.",
+                    fill_required_fields: "Fill in all required fields."
+                },
+                hi: {
+                    day: "अब दिन है ☀️",
+                    night: "अब रात है और बारिश हो रही है 🌙🌧️",
+                    otp_sent: "ओटीपी भेजा गया!",
+                    verified: "सत्यापित!",
+                    profile_created: "प्रोफाइल बनाया गया!",
+                    voice_coming_soon: "वॉइस इनपुट जल्द आएगा!",
+                    enter_valid_phone: "एक वैध 10-अंकीय नंबर दर्ज करें।",
+                    enter_valid_otp: "एक वैध 6-अंकीय ओटीपी दर्ज करें।",
+                    fill_required_fields: "सभी आवश्यक फ़ील्ड भरें।"
+                },
+                mr: {
+                    day: "आता दिवस आहे ☀️",
+                    night: "आता रात्र आहे आणि पाऊस पडत आहे 🌙🌧️",
+                    otp_sent: "ओटीपी पाठवले!",
+                    verified: "सत्यापित!",
+                    profile_created: "प्रोफाइल तयार केली!",
+                    voice_coming_soon: "व्हॉइस इनपुट लवकरच येत आहे!",
+                    enter_valid_phone: "एक वैध 10-अंकी नंबर टाका।",
+                    enter_valid_otp: "एक वैध 6-अंकी ओटीपी टाका।",
+                    fill_required_fields: "सर्व आवश्यक फील्ड भरा।"
+                },
+                gu: {
+                    day: "હવે દિવસ છે ☀️",
+                    night: "હવે રાત છે અને વરસાદ પડી રહ્યો છે 🌙🌧️",
+                    otp_sent: "ઓટીપી મોકલ્યો!",
+                    verified: "ચકાસાયું!",
+                    profile_created: "પ્રોફાઇલ બનાવી!",
+                    voice_coming_soon: "વૉઇસ ઇનપુટ ટૂંક સમયમાં આવશે!",
+                    enter_valid_phone: "એક માન્ય 10-અંકનો નંબर દાખલ કરો।",
+                    enter_valid_otp: "એક માન્ય 6-अંકનો ઓટીપી દાખલ કરો।",
+                    fill_required_fields: "બધા જરૂરી ફીલ્ડ્સ ભરો।"
+                },
+                ml: {
+                    day: "ഇപ്പോൾ പകൽ ആണ് ☀️",
+                    night: "ഇപ്പോൾ രാത്രിയാണ് & മഴ പെയ്യുന്നു 🌙🌧️",
+                    otp_sent: "ഒടിപി അയച്ചു!",
+                    verified: "സ്ഥിരീകരിച്ചു!",
+                    profile_created: "പ്രൊഫൈൽ സൃഷ്ടിച്ചു!",
+                    voice_coming_soon: "വോയ്സ് ഇൻപുട്ട് ഉടൻ വരുന്നു!",
+                    enter_valid_phone: "സാധുവായ 10-അക്ക നമ്പർ നൽകുക।",
+                    enter_valid_otp: "സാധുവായ 6-അക്ക ഒടിപി നൽകുക।",
+                    fill_required_fields: "എല്ലാ ആവശ്യമായ ഫീൽഡുകളും പൂരിപ്പിക്കുക।"
+                }
+            };
+            
+            return toastMessages[currentLanguage] ? toastMessages[currentLanguage][type] : toastMessages.en[type];
+        }
+
+        function showPage(p) {
+            const c = document.getElementById(currentPage + '-page'); 
+            if (c) c.classList.remove('active');
+            
+            // Only add to history if we're not going back to the same page
+            if (currentPage !== p) {
+                // Don't add login page to history to prevent circular navigation
+                if (currentPage !== 'login') {
+                    pageHistory.push(currentPage);
+                }
+            }
+            
+            const n = document.getElementById(p + '-page'); 
+            if (n) n.classList.add('active');
+            currentPage = p;
+            
+            const b = document.getElementById('backButton');
+            // Show back button for all pages except login and home
+            if (p === 'login' || p === 'home') { 
+                if (b) b.style.display = 'none'; 
+            } else { 
+                if (b) b.style.display = 'flex'; 
+            }
+        }
+        
+        function goBack() { 
+            if (pageHistory.length > 0) { 
+                // Get the previous page from history
+                const prevPage = pageHistory.pop();
+                // Hide current page
+                const c = document.getElementById(currentPage + '-page'); 
+                if (c) c.classList.remove('active');
+                // Show previous page
+                const p = document.getElementById(prevPage + '-page'); 
+                if (p) p.classList.add('active');
+                currentPage = prevPage;
+                
+                // Update back button visibility
+                const b = document.getElementById('backButton');
+                if (prevPage === 'login' || prevPage === 'home') { 
+                    if (b) b.style.display = 'none'; 
+                } else { 
+                    if (b) b.style.display = 'flex'; 
+                }
+            } else { 
+                // If no history, go to home page
+                showPage('home'); 
+            } 
+        }
+        
+        function showToast(m) { 
+            const t = document.getElementById('toast'); 
+            if (!t) return; 
+            t.textContent = m; 
+            t.classList.add('show'); 
+            setTimeout(() => { 
+                t.classList.remove('show'); 
+            }, 3000); 
+        }
+        
+        function showPhonePage() { showPage('phone'); }
+        
+        function showHomePage() { 
+            document.getElementById('farmer-name-display').textContent = currentFarmerName;
+            document.getElementById('farm-location-display').textContent = currentFarmLocation;
+            showPage('home'); 
+        }
+        
+        function showChatPage() { showPage('chat'); }
+
+        function submitPhone() { 
+            document.getElementById('phone-input').value.length === 10 ? 
+            (showToast(getTranslatedToast('otp_sent')), setTimeout(() => showPage('otp'), 500)) : 
+            showToast(getTranslatedToast('enter_valid_phone')); 
+        }
+        
+        function verifyOTP() { 
+            document.getElementById('otp-input').value.length === 6 ? 
+            (showToast(getTranslatedToast('verified')), setTimeout(() => showPage('profile'), 500)) : 
+            showToast(getTranslatedToast('enter_valid_otp')); 
+        }
+        
+        function submitProfile() {
+            const n = document.getElementById('farmer-name').value, l = document.getElementById('farm-location').value;
+            if (n && l) {
+                currentFarmerName = n;
+                currentFarmLocation = l;
+                document.getElementById('farmer-name-display').textContent = n;
+                document.getElementById('farm-location-display').textContent = l;
+                showToast(getTranslatedToast('profile_created'));
+                setTimeout(() => showPage('home'), 500);
+            } else { 
+                showToast(getTranslatedToast('fill_required_fields')); 
+            }
+        }
+        
+        function sendMessage() {
+            const i = document.getElementById('chatInput'), m = document.getElementById('chatMessages'); 
+            if (!i || !m || !i.value.trim()) return;
+            const t = i.value.trim();
+            const u = document.createElement('div'); 
+            u.className = 'message user-message'; 
+            u.innerHTML = `<div class="message-avatar"><i class="fas fa-user"></i></div><div class="message-content"><p>${t}</p></div><div class="message-time">${getTranslatedToast('just_now') || 'Just now'}</div>`; 
+            m.appendChild(u);
+            setTimeout(() => {
+                const b = document.createElement('div'); 
+                b.className = 'message bot-message'; 
+                b.innerHTML = `<div class="message-avatar"><i class="fas fa-robot"></i></div><div class="message-content"><p>Thanks for your message about "${t}".</p></div><div class="message-time">${getTranslatedToast('just_now') || 'Just now'}</div>`; 
+                m.appendChild(b);
+                m.scrollTop = m.scrollHeight;
+            }, 1000);
+            i.value = ''; 
+            m.scrollTop = m.scrollHeight;
+        }
+        
+        function startVoiceInput() { 
+            showToast(getTranslatedToast('voice_coming_soon')); 
+        }
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const bgContainer = document.querySelector('.background-animations');
+            const s = document.createElement('div'); 
+            s.className = 'sun'; 
+            bgContainer.appendChild(s);
+            const m = document.createElement('div'); 
+            m.className = 'moon'; 
+            bgContainer.appendChild(m);
+            
+            createLeaves(); 
+            createClouds(); 
+            createRain(); 
+            
+            document.body.classList.add('day'); 
+            isDay = true;
+            
+            document.getElementById('chatInput')?.addEventListener('keypress', (e) => { 
+                if (e.key === 'Enter') sendMessage(); 
+            });
+
+            // Initialize language selector
+            initLanguageSelector();
+
+            // Initialize the first page
+            showPage('login');
+        });
+    </script>
+    
+</body>
+</html>
